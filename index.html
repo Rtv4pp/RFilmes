@@ -1,27 +1,210 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Video Fullscreen com Cast</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<title>Stream Dark</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* cobre a tela inteira */
-    }
-  </style>
+<style>
+:root {
+  --bg: #0e0e10;
+  --card: #1b1b1f;
+  --accent: #e50914;
+  --text: #ffffff;
+  --muted: #b3b3b3;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* HEADER */
+header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #222;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-photo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* GRID FILMES */
+#movieList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* CARD */
+.movie {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.movie:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+.movie img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.movie-info {
+  padding: 12px;
+}
+
+.movie-info h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.movie-info span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* PLAYER */
+#player {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 999;
+}
+
+#player iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* BOTÃO VOLTAR */
+#back {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#back:hover {
+  background: var(--accent);
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid #222;
+  padding: 25px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+footer strong {
+  color: var(--text);
+}
+
+footer span {
+  color: var(--accent);
+}
+</style>
 </head>
+
 <body>
-    <iframe id="video" src="https://player.mediadelivery.net/embed/586952/1e00fed0-c34a-4bf2-b46f-c418f720ef83"></iframe>
+
+<header>
+  <div class="header-content">
+    <img
+      class="header-photo"
+      src="foto.jpg"
+      alt="Raí DEV">
+    <div class="header-title">Raí DEV</div>
+  </div>
+</header>
+
+<section id="movieList">
+
+  <div class="movie" onclick="playMovie('https://player.mediadelivery.net/embed/588864/7568142a-6d08-415a-8c66-19c6d06a016d')">
+    <img src="https://m.media-amazon.com/images/S/pv-target-images/7268903c6effb45445b09550ed629135fb7a56ea6ff7fa9365945addb9c46e62.jpg">
+    <div class="movie-info">
+      <h3>Predador: Terras Selvagens</h3>
+      <span>Ficção científica/Aventura • 2025</span>
+    </div>
+  </div>
+
+  <div class="movie" onclick="playMovie('https://player.mediadelivery.net/embed/586952/1e00fed0-c34a-4bf2-b46f-c418f720ef83')">
+    <img src="https://www.sonypictures.com.br/sites/brazil/files/2025-12/sony_banner_1400x2100_sisu.jpg">
+    <div class="movie-info">
+      <h3>SISU - Estrada da Vingança</h3>
+      <span>Ação/Aventura • 2025</span>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  Desenvolvido por <strong>Raí</strong> © <span>2026</span><br>
+  Especialmente para jhow.
+</footer>
+
+<!-- PLAYER -->
+<div id="player">
+  <button id="back" onclick="closePlayer()">⬅ Voltar</button>
+  <iframe id="video"></iframe>
+</div>
+
+<script>
+function playMovie(url) {
+  document.getElementById("movieList").style.display = "none";
+  document.querySelector("header").style.display = "none";
+  document.querySelector("footer").style.display = "none";
+  document.getElementById("player").style.display = "block";
+  document.getElementById("video").src = url;
+}
+
+function closePlayer() {
+  document.getElementById("video").src = "";
+  document.getElementById("player").style.display = "none";
+  document.getElementById("movieList").style.display = "grid";
+  document.querySelector("header").style.display = "block";
+  document.querySelector("footer").style.display = "block";
+}
+</script>
+
 </body>
 </html>
