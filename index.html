@@ -264,7 +264,11 @@ footer {
     <div class="video-area">
       <button id="back" onclick="closePlayer()">⬅ Voltar</button>
       <button id="toggleEpisodes" onclick="toggleSidebar()">☰ Episódios</button>
-      <iframe id="video"></iframe>
+      <iframe 
+        id="video"
+        allow="fullscreen; autoplay"
+        allowfullscreen
+      ></iframe>
     </div>
 
     <div class="sidebar hidden" id="episodeSidebar">
@@ -336,3 +340,4 @@ function closePlayer() {
 
 </body>
 </html>
+
