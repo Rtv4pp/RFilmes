@@ -50,7 +50,7 @@ header {
   font-weight: bold;
 }
 
-/* GRID FILMES */
+/* GRID */
 #movieList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -58,13 +58,12 @@ header {
   padding: 20px;
 }
 
-/* CARD */
 .movie {
   background: var(--card);
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.2s;
 }
 
 .movie:hover {
@@ -101,10 +100,54 @@ header {
   z-index: 999;
 }
 
-#player iframe {
+.player-container {
+  display: flex;
+  height: 100%;
+}
+
+/* VIDEO */
+.video-area {
+  flex: 1;
+  position: relative;
+}
+
+.video-area iframe {
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* SIDEBAR EPISODIOS */
+.sidebar {
+  width: 300px;
+  background: #111;
+  border-left: 1px solid #222;
+  overflow-y: auto;
+  padding: 20px;
+  display: none;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.episode {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--card);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.episode:hover {
+  background: var(--accent);
+}
+
+.episode.active {
+  background: var(--accent);
 }
 
 /* BOTÃO VOLTAR */
@@ -134,14 +177,6 @@ footer {
   color: var(--muted);
   font-size: 14px;
 }
-
-footer strong {
-  color: var(--text);
-}
-
-footer span {
-  color: var(--accent);
-}
 </style>
 </head>
 
@@ -149,51 +184,113 @@ footer span {
 
 <header>
   <div class="header-content">
-    <img
-      class="header-photo"
-      src="foto.jpg"
-      alt="Raí DEV">
+    <img class="header-photo" src="foto.jpg">
     <div class="header-title">Raí DEV</div>
   </div>
 </header>
 
 <section id="movieList">
 
+  <!-- FILME -->
   <div class="movie" onclick="playMovie('https://player.mediadelivery.net/embed/588864/7568142a-6d08-415a-8c66-19c6d06a016d')">
     <img src="https://m.media-amazon.com/images/S/pv-target-images/7268903c6effb45445b09550ed629135fb7a56ea6ff7fa9365945addb9c46e62.jpg">
     <div class="movie-info">
-      <h3>Predador: Terras Selvagens</h3>
-      <span>Ficção científica/Aventura • 2025</span>
+      <h3>Predador</h3>
+      <span>Filme • 2025</span>
     </div>
   </div>
 
   <div class="movie" onclick="playMovie('https://drive.google.com/file/d/1K4-yhYKpEQEobDbFD_Ta-bbtvk3nMI4_/preview')">
-    <img src="https://www.sonypictures.com.br/sites/brazil/files/2025-12/sony_banner_1400x2100_sisu.jpg">
+    <img src="https://m.media-amazon.com/images/S/pv-target-images/7268903c6effb45445b09550ed629135fb7a56ea6ff7fa9365945addb9c46e62.jpg">
     <div class="movie-info">
       <h3>SISU - Estrada da Vingança</h3>
       <span>Ação/Aventura • 2025</span>
     </div>
   </div>
+
+  <!-- SÉRIE -->
+  <div class="movie" onclick="playSeries('O Dia do Chacal', [
+      {title: 'Episódio 1', url: 'https://drive.google.com/file/d/1s3S6oGopu22HHK6uCvZ3ykSZr0SdP6OB/preview'},
+      {title: 'Episódio 2', url: 'https://drive.google.com/file/d/1ZILldpUoIsWUe76-Aw2UFKWWSYIPTZ96/preview'},
+      {title: 'Episódio 3', url: 'https://drive.google.com/file/d/1Z6SXmnNDX2IjEsxGd57w2l93AcrNoJxV/preview'},
+      {title: 'Episódio 4', url: 'https://drive.google.com/file/d/1_Y7jMxj4-7TjZal_Dnt7WkolWbiaO0II/preview'},
+      {title: 'Episódio 5', url: 'https://drive.google.com/file/d/1_CSYLR2K17K1CXLv4hDA24oub1TP-L8T/preview'},
+      {title: 'Episódio 6', url: 'https://drive.google.com/file/d/10mLFaxLKXr9KP_WPqtkfGLHYghCY_TW1/preview'}
+  ])">
+    <img src="https://filmow.com/o-dia-do-chacal-1a-temporada-t371166/">
+    <div class="movie-info">
+      <h3>O Dia do Chacal</h3>
+      <span>Série • 9 episódios</span>
+    </div>
+  </div>
+
+
 </section>
 
 <footer>
-  Desenvolvido por <strong>Raí</strong> © <span>2026</span><br>
-  Especialmente para jhow.
+  Desenvolvido por <strong>Raí</strong> © 2026
 </footer>
 
 <!-- PLAYER -->
 <div id="player">
-  <button id="back" onclick="closePlayer()">⬅ Voltar</button>
-  <iframe id="video"></iframe>
+  <div class="player-container">
+    
+    <div class="video-area">
+      <button id="back" onclick="closePlayer()">⬅ Voltar</button>
+      <iframe id="video"></iframe>
+    </div>
+
+    <div class="sidebar" id="episodeSidebar">
+      <h2 id="seriesTitle"></h2>
+      <div id="episodeList"></div>
+    </div>
+
+  </div>
 </div>
 
 <script>
-function playMovie(url) {
+
+function openPlayer() {
   document.getElementById("movieList").style.display = "none";
   document.querySelector("header").style.display = "none";
   document.querySelector("footer").style.display = "none";
   document.getElementById("player").style.display = "block";
+}
+
+function playMovie(url) {
+  openPlayer();
+  document.getElementById("episodeSidebar").style.display = "none";
   document.getElementById("video").src = url;
+}
+
+function playSeries(title, episodes) {
+  openPlayer();
+  
+  const sidebar = document.getElementById("episodeSidebar");
+  const list = document.getElementById("episodeList");
+  
+  sidebar.style.display = "block";
+  document.getElementById("seriesTitle").innerText = title;
+  list.innerHTML = "";
+
+  episodes.forEach((ep, index) => {
+    const div = document.createElement("div");
+    div.classList.add("episode");
+    div.innerText = ep.title;
+
+    div.onclick = () => {
+      document.getElementById("video").src = ep.url;
+      document.querySelectorAll(".episode").forEach(e => e.classList.remove("active"));
+      div.classList.add("active");
+    };
+
+    if(index === 0){
+      div.classList.add("active");
+      document.getElementById("video").src = ep.url;
+    }
+
+    list.appendChild(div);
+  });
 }
 
 function closePlayer() {
@@ -203,11 +300,8 @@ function closePlayer() {
   document.querySelector("header").style.display = "block";
   document.querySelector("footer").style.display = "block";
 }
+
 </script>
 
 </body>
 </html>
-
-
-
-
