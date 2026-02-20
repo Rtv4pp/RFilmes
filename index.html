@@ -109,6 +109,7 @@ header {
 .video-area {
   flex: 1;
   position: relative;
+  transition: 0.3s;
 }
 
 .video-area iframe {
@@ -117,14 +118,39 @@ header {
   border: none;
 }
 
-/* SIDEBAR EPISODIOS */
+/* BOTÃO TOGGLE */
+#toggleEpisodes {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#toggleEpisodes:hover {
+  background: var(--accent);
+}
+
+/* SIDEBAR */
 .sidebar {
   width: 300px;
   background: #111;
   border-left: 1px solid #222;
   overflow-y: auto;
   padding: 20px;
-  display: none;
+  transition: 0.3s;
+}
+
+.sidebar.hidden {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .sidebar h2 {
@@ -237,10 +263,11 @@ footer {
     
     <div class="video-area">
       <button id="back" onclick="closePlayer()">⬅ Voltar</button>
+      <button id="toggleEpisodes" onclick="toggleSidebar()">☰ Episódios</button>
       <iframe id="video"></iframe>
     </div>
 
-    <div class="sidebar" id="episodeSidebar">
+    <div class="sidebar hidden" id="episodeSidebar">
       <h2 id="seriesTitle"></h2>
       <div id="episodeList"></div>
     </div>
@@ -259,7 +286,7 @@ function openPlayer() {
 
 function playMovie(url) {
   openPlayer();
-  document.getElementById("episodeSidebar").style.display = "none";
+  document.getElementById("episodeSidebar").classList.add("hidden");
   document.getElementById("video").src = url;
 }
 
@@ -269,7 +296,7 @@ function playSeries(title, episodes) {
   const sidebar = document.getElementById("episodeSidebar");
   const list = document.getElementById("episodeList");
   
-  sidebar.style.display = "block";
+  sidebar.classList.remove("hidden");
   document.getElementById("seriesTitle").innerText = title;
   list.innerHTML = "";
 
@@ -291,6 +318,10 @@ function playSeries(title, episodes) {
 
     list.appendChild(div);
   });
+}
+
+function toggleSidebar() {
+  document.getElementById("episodeSidebar").classList.toggle("hidden");
 }
 
 function closePlayer() {
